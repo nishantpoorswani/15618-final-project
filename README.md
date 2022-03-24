@@ -6,6 +6,23 @@ We are going to implement a multi-core cache simulator. This simulator will supp
 
 ## BACKGROUND:
 
+This project is an inspiration from Introduction to Computer Systems (15-213) Cache lab which is a cache simulator for a uniprocessor. Our idea is to build a cache simulator that supports multi-core processor. Caches play a vital role in determining the performance of parallel programs on a multi-core processor. One of the major challenges that multi-core processors face is the coherency problem. Cache is coherent when all the loads and stores to a given memory location behave correctly. There are two main methods to ensure cache coherence: a) snooping based cache coherence schemes b) directory based cache coherence schemes. 
+
+Snooping based cache coherence scheme work based on the idea that coherence-related activity is broadcast to all processors in the system. Cache controllers snoop on the bus to monitor memory operations, and react accordingly, to maintain cache coherence. There are a few snooping based cache coherence schemes like MI(VI), MSI, MESI and MOESI. 
+
+### MI:
+
+![image](https://user-images.githubusercontent.com/80713159/159839944-505bf792-c69b-4556-ac90-35a748906504.png)
+
+### MSI
+
+![tempsnip](https://user-images.githubusercontent.com/80713159/159840351-fe896d5c-6f04-4c65-b93e-15dc999fee7e.png)
+
+### MESI
+
+![tempsnip1](https://user-images.githubusercontent.com/80713159/159840596-00ec5f54-2cdf-4fae-b2b4-d2395418cc56.png)
+
+
 ## CHALLENGE:
 
 1) Designing bus arbitration for multi-core processor
