@@ -2,7 +2,7 @@
 
 ## SUMMARY:
 
-We are going to implement a multi-core cache simulator
+We are going to implement a multi-core cache simulator. This simulator will support different snooping based cache coherence schemes. It will analyze traces to report various cache performance metrics. This simulator based tool will also provide cache performance optimization recommendations to the user to improve memory performance.
 
 ## BACKGROUND:
 
@@ -19,9 +19,11 @@ We are going to implement a multi-core cache simulator
 
 ## GOALS AND DELIVERABLES:
 
-75% - Implementing MI (VI), MSI and MESI snooping based cache coherence protocols.
-100% - Implement MOESI based cache coherence protocol and report different metrics - accesses, misses, hits and true/false sharing.
-125% - Visualization of data and custom recommendations on how to improve memory performance. 
+| Goal % | Goals |
+| ----------- | ----------- |
+| 75% | Implementing MI (VI), MSI and MESI snooping based cache coherence protocols |
+| 100% | Implement MOESI based cache coherence protocol and report different metrics - accesses, misses, hits and true/false sharing | 
+| 125% | Visualization of data and custom recommendations on how to improve memory performance | 
 
 ## PLATFORM CHOICE:
 
