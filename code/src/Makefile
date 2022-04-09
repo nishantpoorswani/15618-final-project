@@ -1,5 +1,5 @@
 CXX=g++ -m64
-CXXFLAGS=-I ../include -O3 -Wall
+CXXFLAGS=-I ../include -O3 -Wall -std=c++11
 
 APP_NAME=cacheSim
 OUTDIR=output

@@ -11,16 +11,14 @@
 
 #include "../include/cache.h"
 
-using namespace std; 
+using namespace std;
+using namespace cacheSim;
 /** @brief Parses command line args */
 int parameterParser(int argc, char *argv[], int *s, int *E, int *b,
                      char **traceFilePtr);
 
 /** @brief Parses through the trace file */
-int traceParser(char *traceFile, int s, int E, int b, cache* cacheCore);
-
-void cacheLogic(char operation, cache* cacheCore, long address);
-
+int traceParser(char *traceFile, int s, int E, int b, cache *cacheCore);
 
 int main(int argc, char *argv[]) {
     int S, s, E, b, B, retValue;
@@ -96,15 +94,17 @@ int parameterParser(int argc, char *argv[], int *s, int *E, int *b,
 int traceParser(char *traceFile, int s, int E, int b, cache* cacheCore) {
     FILE *handle;
     char operation;
-    long address, tag_data;
-    unsigned set_no;
+    long address;
     int size;
+    //cout << traceFile << endl;
     handle = fopen(traceFile, "r");
     if (handle == NULL) {
+        cout << "file open failed" << endl;
         return (-1);
     }
+    cout << "here" << endl;
     while (fscanf(handle, "%c %lx,%d\n", &operation, &address, &size) > 0) {
-        cacheCore->cacheLogic(operation, cacheCore, address);
+       cacheCore->cacheLogic(operation, address);
     }
     fclose(handle);
     return (0);
