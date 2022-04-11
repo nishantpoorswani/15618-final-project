@@ -119,7 +119,7 @@ summary:
 
 # Remove any files that were created by the make process.
 clean:
-	-rm -rf $(OBJDIR) *.out* *.log* *.xml *.makefile.copy *.core core.*
+	-rm -rf $(OBJDIR) *.out* *.log* *.xml *.makefile.copy *.core core.* cache.o
 
 clean-remote:
 	-$(INSTALLER) $(INSTALL_FLAGS) --clean
@@ -223,7 +223,8 @@ $(OBJDIR)%.tested:
 #	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $<
 
 cache.o: cache.cpp
-	$(CXX) -m64 -fPIC -I ../include -O3 -Wall -std=c++11 -c -o $@ $<
+	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $< -std=c++11
+#	$(CXX) -m64 -fPIC -I ../include -O3 -Wall -c -o $@ $< 
 
 # Build the intermediate object file.
 $(OBJDIR)%$(OBJ_SUFFIX): %.cpp
