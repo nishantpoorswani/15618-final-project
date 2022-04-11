@@ -74,6 +74,7 @@ VOID Instruction(INS ins, VOID* v)
 VOID Fini(INT32 code, VOID* v)
 {
     fprintf(trace, "#eof\n");
+    printf("hits:%d, misses:%d, evictions:%d \n", cacheCore0->hits, cacheCore0->misses, cacheCore0->evictions);
     fclose(trace);
 }
 
@@ -142,7 +143,7 @@ int main(int argc, char* argv[])
     S = 1 << s;
     B = 1 << b;
 
-    printf("S:%d E:%d B:%d \n", S, E, B);
+    //printf("S:%d E:%d B:%d \n", S, E, B);
     cacheCore0 = new cacheSim::cache(S, E, B);
     
     if (PIN_Init(argc, argv)) return Usage();

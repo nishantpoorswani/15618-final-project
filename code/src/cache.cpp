@@ -107,6 +107,6 @@ namespace cacheSim
       misses++;
       allocateLine(caSet, address, 0);
     }
-    std::cout << "hits:" << hits << " misses:" << misses << " evictions" << evictions << "\n";
+    //std::cout << "hits:" << hits << " misses:" << misses << " evictions" << evictions << "\n";
   }
 } // namespace cacheSim
