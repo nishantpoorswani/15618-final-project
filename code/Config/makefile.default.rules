@@ -40,8 +40,9 @@ LIBS := $(LIB_ROOTS:%=$(OBJDIR)%$(LIB_SUFFIX))
 # Create the output directory.
 dir: $(OBJDIR)
 
-tp: tp.o
+#tp: tp.o
 
+cache: cache.o
 print_filtered_tests:
 	-@$(PYTHON) $(TOOLS_ROOT)/Utils/printFilteredTests.py --unfiltered_tests "$(RUNNABLE_TESTS)" --tests "$(TESTS) $(SERIAL)"
 
@@ -58,13 +59,13 @@ obj-%:
 # In this case, we require that $(OBJDIR) exist, but we don't care if it has changed.
 $(TEST_TOOL_ROOTS:%=%.test) $(TEST_ROOTS:%=%.test): %: | dir
 $(TESTS) $(SANITY) $(SERAIL): %: | dir
-$(TOOLS) $(TOOLS:%$(PINTOOL_SUFFIX)=%$(OBJ_SUFFIX)) $(SA_TOOLS) $(SA_TOOLS:%$(SATOOL_SUFFIX)=%$(OBJ_SUFFIX)): %: | dir tp
+$(TOOLS) $(TOOLS:%$(PINTOOL_SUFFIX)=%$(OBJ_SUFFIX)) $(SA_TOOLS) $(SA_TOOLS:%$(SATOOL_SUFFIX)=%$(OBJ_SUFFIX)): %: | dir cache
 $(APPS) $(OBJECTS) $(DLLS) $(LIBS): %: | dir
 
 ###### Build ######
 
 # Build the tools.
-tools: dir tp $(TOOLS) $(SA_TOOLS)
+tools: dir cache $(TOOLS) $(SA_TOOLS)
 
 # Build the applications.
 apps: dir $(APPS)
@@ -218,9 +219,12 @@ $(OBJDIR)%.tested:
 ##############################################################
 
 ###### Default build rules for tools ######
-tp.o: tp.cpp
-	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $<
- 
+#tp.o: tp.cpp
+#	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $<
+
+cache.o: cache.cpp
+	$(CXX) -m64 -fPIC -I ../include -O3 -Wall -std=c++11 -c -o $@ $<
+
 # Build the intermediate object file.
 $(OBJDIR)%$(OBJ_SUFFIX): %.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
@@ -231,7 +235,7 @@ $(OBJDIR)%$(OBJ_SUFFIX): %.c
 
 # Build the tool as a dll (shared object).
 $(OBJDIR)%$(PINTOOL_SUFFIX): $(OBJDIR)%$(OBJ_SUFFIX)
-	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $< tp.o $(TOOL_LPATHS) $(TOOL_LIBS)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $< cache.o $(TOOL_LPATHS) $(TOOL_LIBS)
 
 # Build the static analysis tools.
 $(SA_TOOLS): %$(SATOOL_SUFFIX): %$(OBJ_SUFFIX)

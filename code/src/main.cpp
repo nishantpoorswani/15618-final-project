@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     S = 1 << s;
     B = 1 << b;
     //cout << "s:" << s << " S:" << S << " E:" << E << " b:" << b << " t:" << traceFile << endl;
-
+    printf("S:%d E:%d B:%d \n", S, E, B);
     cache *cacheCore0 = new cache(S, E, B);
 
     retValue = traceParser(traceFile, s, E, b, cacheCore0);
