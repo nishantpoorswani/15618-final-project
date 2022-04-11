@@ -62,7 +62,7 @@ To generate the memory trace, we will be using Intel's Pin tool. This tool analy
 | ----------- | ----------- |
 | 03/28/22 - 04/03/22 | Understanding Pin tool and generating memory traces using Pin Tool |
 | 04/04/22 - 04/06/22 | Designing event-driven uni-processor cache simulator | 
-| 04/07/22 - 04/11/22 | Implementing an event-driven un-processor cache simulator |
+| 04/07/22 - 04/11/22 | Implementing an event-driven uni-processor cache simulator |
 | 04/14/22 - 04/18/22 | Implement Atomic bus arbiter and account for various access delays |
 | 04/19/22 - 04/24/22 | Implement MI and MSI snooping based cache coherence protocols  | 
 | 04/25/22 - 04/29/22 | Testing and debugging of the project and bug fixes | 
