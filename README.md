@@ -77,7 +77,7 @@ We designed a uniprocessor cache simulator using C++ STL library and implemented
 
 The next challenge was to build a event-driven cache simulator by integrating Pin tool with our uni-processor cache simulator. Whenever, Pin tracks a memory access event, it triggers our cache simulator which simulates the cache at run time. We also create a trace of these memory accesses which we use to verify the correctness of our event-driven cache simulator. We check the cache stats obtained by running a simple program and then feed the trace obtained to the csim-ref that was used in Cache Lab (15213 - Introduction to Computer Systems). Our results match with the Csim-ref and hence, our event-driven simulator is working correctly.
 
-**2) Describe how you are doing with respect to the goals and deliverables stated in your proposal. Do you still believe you will be able to produce all your deliverables? If not, why? What about the â€nice to havesâ€? In your milestone writeup we want an updated list of goals that you plan to hit for the poster session.**
+**2) Describe how you are doing with respect to the goals and deliverables stated in your proposal. Do you still believe you will be able to produce all your deliverables? In your milestone writeup we want an updated list of goals that you plan to hit for the poster session.**
 
 
 **3) What do you plan to show at the poster session? Will it be a demo? Will it be a graph?**
@@ -85,17 +85,24 @@ The next challenge was to build a event-driven cache simulator by integrating Pi
 We plan to show cache statistics graphs on how different parallel programs perform with different snooping based cache coherence protocols. If time permits we plan to show a quick demo of our event-driven multi-core cache simulator.  
 
 **4) Do you have preliminary results at this time? If so, it would be great to included them in your milestone write-up.**
-. We're attaching a screenshot of the stats obtain from our simulator and the reference simulator given in Cache Lab.
-Yes, we do have preliminary results. 
 
-We completed an event-driven uni-processor cache simulator. Our simulator simulates the cache at runtime as each memory access happens. We also create a trace of these memory accesses. To verify the correctness of our event-driven cache simulator, we check the cache stats obtained by running a simple program and then feed the trace obtained to the csim-ref that was used in Cache Lab (15213 - Introduction to Computer Systems). Our results match with the Csim-ref and hence, our simulator is working correctly.
-![tempsnip](https://user-images.githubusercontent.com/80713159/162825829-87f7866e-e06a-4e3f-9201-2818fcf052f4.png)
+We're attaching a screenshot of the stats obtained from our event-driven simulator and the reference simulator given in Cache Lab for a simple program.
 
-![image](https://user-images.githubusercontent.com/80713159/162825489-a63de862-6f50-4813-8800-d2d7c624cd04.png)
+**Reference cache simulator statistics**
+![tempsnip](https://user-images.githubusercontent.com/80713159/162835134-8598c7e3-b094-421e-82a4-71ab321dcf4a.png)
+
+**Event-driven cache simulator statistics**
+![image](https://user-images.githubusercontent.com/80713159/162835109-0c559427-6aac-45cd-a064-159523f69d0a.png)
+
+
+**5) List the issues that concern you the most. Are there any remaining unknowns (things you simply don’t know how to solve, or resource you don’t know how to get) or is it just a matter of coding and doing the work?**
+
+•	The next big challenge in our project is to implement a shared bus for a multi-core processor. We have designed the bus and it’s a matter of coding. 
+
+•	Once we implement the different snooping-based cache coherence protocols, there is a challenge to verify the correctness of these protocols. We plan to write our own traces to verify the correctness.
 
 
 
-List the issues that concern you the most. Are there any remaining unknowns (things you simply donâ€™t know how to solve, or resource you donâ€™t know how to get) or is it just a matter of coding and doing the work? If you do not wish to put this information on a public web site you are welcome to email the staff directly.
 ## AUTHORS:
 
 Nishant Poorswani [npoorswa@andrew.cmu.edu](npoorswa@andrew.cmu.edu)
