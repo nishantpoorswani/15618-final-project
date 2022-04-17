@@ -43,6 +43,8 @@ dir: $(OBJDIR)
 #tp: tp.o
 
 cache: cache.o
+MI: MI.o
+
 print_filtered_tests:
 	-@$(PYTHON) $(TOOLS_ROOT)/Utils/printFilteredTests.py --unfiltered_tests "$(RUNNABLE_TESTS)" --tests "$(TESTS) $(SERIAL)"
 
@@ -59,13 +61,13 @@ obj-%:
 # In this case, we require that $(OBJDIR) exist, but we don't care if it has changed.
 $(TEST_TOOL_ROOTS:%=%.test) $(TEST_ROOTS:%=%.test): %: | dir
 $(TESTS) $(SANITY) $(SERAIL): %: | dir
-$(TOOLS) $(TOOLS:%$(PINTOOL_SUFFIX)=%$(OBJ_SUFFIX)) $(SA_TOOLS) $(SA_TOOLS:%$(SATOOL_SUFFIX)=%$(OBJ_SUFFIX)): %: | dir cache
+$(TOOLS) $(TOOLS:%$(PINTOOL_SUFFIX)=%$(OBJ_SUFFIX)) $(SA_TOOLS) $(SA_TOOLS:%$(SATOOL_SUFFIX)=%$(OBJ_SUFFIX)): %: | dir cache MI
 $(APPS) $(OBJECTS) $(DLLS) $(LIBS): %: | dir
 
 ###### Build ######
 
 # Build the tools.
-tools: dir cache $(TOOLS) $(SA_TOOLS)
+tools: dir cache MI $(TOOLS) $(SA_TOOLS)
 
 # Build the applications.
 apps: dir $(APPS)
@@ -119,7 +121,7 @@ summary:
 
 # Remove any files that were created by the make process.
 clean:
-	-rm -rf $(OBJDIR) *.out* *.log* *.xml *.makefile.copy *.core core.* cache.o
+	-rm -rf $(OBJDIR) *.out* *.log* *.xml *.makefile.copy *.core core.* cache.o MI.o
 
 clean-remote:
 	-$(INSTALLER) $(INSTALL_FLAGS) --clean
@@ -226,6 +228,9 @@ cache.o: cache.cpp
 	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $< -std=c++11
 #	$(CXX) -m64 -fPIC -I ../include -O3 -Wall -c -o $@ $< 
 
+MI.o: MI.cpp
+	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $< -std=c++11
+
 # Build the intermediate object file.
 $(OBJDIR)%$(OBJ_SUFFIX): %.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
@@ -236,7 +241,7 @@ $(OBJDIR)%$(OBJ_SUFFIX): %.c
 
 # Build the tool as a dll (shared object).
 $(OBJDIR)%$(PINTOOL_SUFFIX): $(OBJDIR)%$(OBJ_SUFFIX)
-	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $< cache.o $(TOOL_LPATHS) $(TOOL_LIBS)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $< cache.o MI.o $(TOOL_LPATHS) $(TOOL_LIBS)
 
 # Build the static analysis tools.
 $(SA_TOOLS): %$(SATOOL_SUFFIX): %$(OBJ_SUFFIX)

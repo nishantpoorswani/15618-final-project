@@ -43,8 +43,6 @@ namespace cacheSim
     hits = 0;
     misses = 0;
     evictions = 0;
-    dirty_bytes = 0;
-    dirty_evictions = 0;
   }
 
   void cache::evict(std::list<cacheLine>* lines,
@@ -94,11 +92,10 @@ namespace cacheSim
     // If there isn't a set, create it.
     auto& caSet = getLine(address);
     std::list<cacheLine>::iterator line;
-
+    
     if (isHit(caSet, address, &line)) 
     {
-      caSet.push_back(cacheLine(address, getTag(address), false,
-          line->dirty || (operation == 'S')));
+      caSet.push_back(cacheLine(address, getTag(address)));
       caSet.erase(line);
       hits++;
     }
@@ -107,6 +104,5 @@ namespace cacheSim
       misses++;
       allocateLine(caSet, address, 0);
     }
-    //std::cout << "hits:" << hits << " misses:" << misses << " evictions" << evictions << "\n";
   }
 } // namespace cacheSim

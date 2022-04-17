@@ -12,22 +12,17 @@ namespace cacheSim
 {
     class cache 
     {
-        protected:
+        public:
             int hits;
             int misses;
             int evictions;
-            int dirty_bytes;
-            int dirty_evictions;
-        public:
             struct cacheLine {
                 long addr;  //add based on usage
                 long tag;
-                bool valid;
-                bool dirty;
+                /* Cache line state to implement snooping based coherence protocols */
+                int state;
                 cacheLine(long addr, long tag):
-                    addr(addr), tag(tag), valid(true), dirty(false) {}
-                cacheLine(long addr, long tag, bool valid, bool dirty):
-                    addr(addr), tag(tag), valid(valid), dirty(dirty) {}
+                    addr(addr), tag(tag) {}
             };
 
             cache(int sets, int associativity, int blockSize);

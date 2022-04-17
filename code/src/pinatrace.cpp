@@ -19,18 +19,21 @@
 #include <stdio.h>
 #include "pin.H"
 #include "tp.h"
-#include "../include/cache.h"
+
+#include "../include/MI.h"
 
 FILE* trace;
 PIN_LOCK lock;
-cacheSim::cache *cacheCore0 = NULL;
+cacheSim::cache **cacheCore = NULL;
+cacheSim::MI MIProtocol;
 
 // Print a memory read record
 VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) { 
     PIN_GetLock(&lock, tid);
     //fprintf(trace, "%p: R %p %d\n", ip, addr, tid);
     fprintf(trace, "L %lx,1\n", (long int)addr);
-    cacheCore0->cacheLogic('L', (long)addr); 
+    //cacheCore[0]->cacheLogic('L', (long)addr); 
+    MIProtocol.controller(cacheCore, 'L', (long)addr, (cacheSim::MI::prAction) 0, (cacheSim::MI::busAction) 0);
     PIN_ReleaseLock(&lock);
 }
 
@@ -38,7 +41,8 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
 VOID RecordMemWrite(VOID* ip, VOID* addr, THREADID tid) {
     PIN_GetLock(&lock, tid); 
     fprintf(trace, "S %lx,1\n", (long int)addr);
-    cacheCore0->cacheLogic('S', (long)addr); 
+    //cacheCore[0]->cacheLogic('S', (long)addr); 
+    MIProtocol.controller(cacheCore, 'S', (long)addr, (cacheSim::MI::prAction) 0, (cacheSim::MI::busAction) 0);
     PIN_ReleaseLock(&lock);
 }
 
@@ -74,7 +78,7 @@ VOID Instruction(INS ins, VOID* v)
 VOID Fini(INT32 code, VOID* v)
 {
     fprintf(trace, "#eof\n");
-    printf("hits:%d, misses:%d, evictions:%d \n", cacheCore0->hits, cacheCore0->misses, cacheCore0->evictions);
+    printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[0]->hits, cacheCore[0]->misses, cacheCore[0]->evictions);
     fclose(trace);
 }
 
@@ -143,8 +147,14 @@ int main(int argc, char* argv[])
     S = 1 << s;
     B = 1 << b;
 
+    cacheCore = new (cacheSim::cache*[1]);
+
+    for(int i=0; i<1; i++)
+    {
+        cacheCore[i] = new cacheSim::cache(S, E, B);
+    }
     //printf("S:%d E:%d B:%d \n", S, E, B);
-    cacheCore0 = new cacheSim::cache(S, E, B);
+    //cacheCore0 = new cacheSim::cache(S, E, B);
     
     if (PIN_Init(argc, argv)) return Usage();
 
