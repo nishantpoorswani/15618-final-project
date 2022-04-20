@@ -21,6 +21,7 @@
 #include "tp.h"
 
 #include "../include/MI.h"
+#include "../include/MSI.h"
 #include "../include/MESI.h"
 
 FILE* trace;
@@ -31,6 +32,7 @@ int numCores = 3;
 cacheSim::cache **cacheCore = NULL;
 /* Snooping based cache protocol objects */
 cacheSim::MI MIProtocol;
+cacheSim::MSI MSIProtocol;
 cacheSim::MESI MESIProtocol;
 
 // Print a memory read record

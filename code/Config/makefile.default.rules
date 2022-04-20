@@ -44,6 +44,7 @@ dir: $(OBJDIR)
 
 cache: cache.o
 MI: MI.o
+MSI: MSI.o
 MESI: MESI.o
 
 print_filtered_tests:
@@ -62,13 +63,13 @@ obj-%:
 # In this case, we require that $(OBJDIR) exist, but we don't care if it has changed.
 $(TEST_TOOL_ROOTS:%=%.test) $(TEST_ROOTS:%=%.test): %: | dir
 $(TESTS) $(SANITY) $(SERAIL): %: | dir
-$(TOOLS) $(TOOLS:%$(PINTOOL_SUFFIX)=%$(OBJ_SUFFIX)) $(SA_TOOLS) $(SA_TOOLS:%$(SATOOL_SUFFIX)=%$(OBJ_SUFFIX)): %: | dir cache MI MESI
+$(TOOLS) $(TOOLS:%$(PINTOOL_SUFFIX)=%$(OBJ_SUFFIX)) $(SA_TOOLS) $(SA_TOOLS:%$(SATOOL_SUFFIX)=%$(OBJ_SUFFIX)): %: | dir cache MI MSI MESI
 $(APPS) $(OBJECTS) $(DLLS) $(LIBS): %: | dir
 
 ###### Build ######
 
 # Build the tools.
-tools: dir cache MI MESI $(TOOLS) $(SA_TOOLS)
+tools: dir cache MI MSI MESI $(TOOLS) $(SA_TOOLS)
 
 # Build the applications.
 apps: dir $(APPS)
@@ -122,7 +123,7 @@ summary:
 
 # Remove any files that were created by the make process.
 clean:
-	-rm -rf $(OBJDIR) *.out* *.log* *.xml *.makefile.copy *.core core.* cache.o MI.o MESI.o
+	-rm -rf $(OBJDIR) *.out* *.log* *.xml *.makefile.copy *.core core.* cache.o MI.o MSI.o MESI.o
 
 clean-remote:
 	-$(INSTALLER) $(INSTALL_FLAGS) --clean
@@ -232,6 +233,9 @@ cache.o: cache.cpp
 MI.o: MI.cpp
 	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $< -std=c++11
 
+MSI.o: MSI.cpp
+	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $< -std=c++11
+
 MESI.o: MESI.cpp
 	$(CXX) -fPIC $(TOOL_CXXFLAGS) -c -o $@ $< -std=c++11
 
@@ -245,7 +249,7 @@ $(OBJDIR)%$(OBJ_SUFFIX): %.c
 
 # Build the tool as a dll (shared object).
 $(OBJDIR)%$(PINTOOL_SUFFIX): $(OBJDIR)%$(OBJ_SUFFIX)
-	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $< cache.o MI.o MESI.o $(TOOL_LPATHS) $(TOOL_LIBS)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $< cache.o MI.o MSI.o MESI.o $(TOOL_LPATHS) $(TOOL_LIBS)
 
 # Build the static analysis tools.
 $(SA_TOOLS): %$(SATOOL_SUFFIX): %$(OBJ_SUFFIX)
