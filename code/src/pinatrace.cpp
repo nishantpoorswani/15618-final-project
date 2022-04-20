@@ -21,6 +21,7 @@
 #include "tp.h"
 
 #include "../include/MI.h"
+#include "../include/MESI.h"
 
 FILE* trace;
 PIN_LOCK lock;
@@ -30,6 +31,7 @@ int numCores = 3;
 cacheSim::cache **cacheCore = NULL;
 /* Snooping based cache protocol objects */
 cacheSim::MI MIProtocol;
+cacheSim::MESI MESIProtocol;
 
 // Print a memory read record
 VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) { 

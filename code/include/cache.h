@@ -1,3 +1,6 @@
+#ifndef CACHE_H
+#define CACHE_H
+
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
@@ -83,3 +86,5 @@ namespace cacheSim
 
     };
 } // namespace cacheSim
+
+#endif /* CACHE_H */

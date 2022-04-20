@@ -1,5 +1,5 @@
-#ifndef MI_H
-#define MI_H
+#ifndef MESI_H
+#define MESI_H
 
 #include <algorithm>
 #include <cstdio>
@@ -16,7 +16,7 @@
 
 namespace cacheSim
 {
-    class MI
+    class MESI
     {
         public:
             enum lineState
@@ -45,4 +45,4 @@ namespace cacheSim
     };
 }
 
-#endif /* MI_H */
+#endif /* MESI_H */
