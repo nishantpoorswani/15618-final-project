@@ -21,15 +21,15 @@ namespace cacheSim
                 long tag;
                 /* Cache line state to implement snooping based coherence protocols */
                 int state;
+                /* Always update the cache line to invalid state */
                 cacheLine(long addr, long tag):
-                    addr(addr), tag(tag) {}
+                    addr(addr), tag(tag), state(0) {}
             };
 
             cache(int sets, int associativity, int blockSize);
 
             void cacheLogic(char operation, long address);
 
-        protected:
             unsigned int sets;
             unsigned int associativity;
             unsigned int blockNum;

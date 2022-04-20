@@ -17,8 +17,8 @@ namespace cacheSim
         public:
             enum lineState
             {
-                modified = 0,
-                invalid = 1
+                invalid = 0,
+                modified = 1
             };
 
             enum busAction
@@ -33,7 +33,10 @@ namespace cacheSim
                 prWr = 1
             };
 
-        void controller(cache** cacheCore, char operation, long address, prAction prAc, busAction busAc);
+        void controller(int numCores, cache** cacheCore, int tid, char operation, long address);
 
+        void handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address);
+
+        void handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address);
     };
 }

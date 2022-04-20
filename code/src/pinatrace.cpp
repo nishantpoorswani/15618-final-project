@@ -24,7 +24,11 @@
 
 FILE* trace;
 PIN_LOCK lock;
+/* number of cores */
+int numCores = 1;
+/* Pointer to multi-core cache objects */
 cacheSim::cache **cacheCore = NULL;
+/* Snooping based cache protocol objects */
 cacheSim::MI MIProtocol;
 
 // Print a memory read record
@@ -33,7 +37,7 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
     //fprintf(trace, "%p: R %p %d\n", ip, addr, tid);
     fprintf(trace, "L %lx,1\n", (long int)addr);
     //cacheCore[0]->cacheLogic('L', (long)addr); 
-    MIProtocol.controller(cacheCore, 'L', (long)addr, (cacheSim::MI::prAction) 0, (cacheSim::MI::busAction) 0);
+    MIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
     PIN_ReleaseLock(&lock);
 }
 
@@ -42,7 +46,7 @@ VOID RecordMemWrite(VOID* ip, VOID* addr, THREADID tid) {
     PIN_GetLock(&lock, tid); 
     fprintf(trace, "S %lx,1\n", (long int)addr);
     //cacheCore[0]->cacheLogic('S', (long)addr); 
-    MIProtocol.controller(cacheCore, 'S', (long)addr, (cacheSim::MI::prAction) 0, (cacheSim::MI::busAction) 0);
+    MIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr );
     PIN_ReleaseLock(&lock);
 }
 

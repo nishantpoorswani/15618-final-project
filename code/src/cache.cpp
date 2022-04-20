@@ -40,6 +40,7 @@ namespace cacheSim
     debug("indexMask 0x%x", indexMask);
     debug("tagOffset %d", tagOffset);
 
+    /* Initialize cache statistics */
     hits = 0;
     misses = 0;
     evictions = 0;
