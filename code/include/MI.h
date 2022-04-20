@@ -7,6 +7,7 @@
 #include <memory>
 #include <queue>
 #include <list>
+#include <iostream>
 
 #include "../include/cache.h"
 

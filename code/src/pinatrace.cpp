@@ -25,7 +25,7 @@
 FILE* trace;
 PIN_LOCK lock;
 /* number of cores */
-int numCores = 1;
+int numCores = 3;
 /* Pointer to multi-core cache objects */
 cacheSim::cache **cacheCore = NULL;
 /* Snooping based cache protocol objects */
@@ -35,7 +35,7 @@ cacheSim::MI MIProtocol;
 VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) { 
     PIN_GetLock(&lock, tid);
     //fprintf(trace, "%p: R %p %d\n", ip, addr, tid);
-    fprintf(trace, "L %lx,1\n", (long int)addr);
+    //fprintf(trace, "L %lx,1\n", (long int)addr);
     //cacheCore[0]->cacheLogic('L', (long)addr); 
     MIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
     PIN_ReleaseLock(&lock);
@@ -44,7 +44,7 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
 // Print a memory write record
 VOID RecordMemWrite(VOID* ip, VOID* addr, THREADID tid) {
     PIN_GetLock(&lock, tid); 
-    fprintf(trace, "S %lx,1\n", (long int)addr);
+    //fprintf(trace, "S %lx,1\n", (long int)addr);
     //cacheCore[0]->cacheLogic('S', (long)addr); 
     MIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr );
     PIN_ReleaseLock(&lock);
@@ -81,9 +81,10 @@ VOID Instruction(INS ins, VOID* v)
 
 VOID Fini(INT32 code, VOID* v)
 {
-    fprintf(trace, "#eof\n");
+    //fprintf(trace, "#eof\n");
     printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[0]->hits, cacheCore[0]->misses, cacheCore[0]->evictions);
-    fclose(trace);
+    printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[1]->hits, cacheCore[1]->misses, cacheCore[1]->evictions);
+    //fclose(trace);
 }
 
 /* ===================================================================== */
@@ -151,9 +152,9 @@ int main(int argc, char* argv[])
     S = 1 << s;
     B = 1 << b;
 
-    cacheCore = new (cacheSim::cache*[1]);
+    cacheCore = new (cacheSim::cache*[3]);
 
-    for(int i=0; i<1; i++)
+    for(int i=0; i<numCores; i++)
     {
         cacheCore[i] = new cacheSim::cache(S, E, B);
     }
@@ -162,7 +163,7 @@ int main(int argc, char* argv[])
     
     if (PIN_Init(argc, argv)) return Usage();
 
-    trace = fopen("pinatrace.out", "w");
+    //trace = fopen("pinatrace.out", "w");
 
     INS_AddInstrumentFunction(Instruction, 0);
     PIN_AddFiniFunction(Fini, 0);

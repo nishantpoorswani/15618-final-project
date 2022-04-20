@@ -23,8 +23,11 @@ namespace cacheSim
         /* Update the state of the cache line to modified */
         auto& caSet = cacheCore[tid]->getLine(address);
         std::list<cacheSim::cache::cacheLine>::iterator line = caSet.end();
+        //std::cout << "Inside processor action after end size: " << caSet.size() << "\n";
         line--;
+        //std::cout << "Inside processor action after decrement iterator: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
         line->state = (int)modified;
+        //std::cout << "Inside processor action after change line state: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
     }
 
     void MI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address)
@@ -47,6 +50,7 @@ namespace cacheSim
                     if (line == caSet.end()) {
                         continue;
                     }
+                    //std::cout << "Inside bus action: address: " << address << " tid: " << tid << "\n"; 
                     line->state = (int)invalid;
                     caSet.erase(line);
                 }
@@ -56,7 +60,7 @@ namespace cacheSim
 
     void MI::controller(int numCores, cacheSim::cache **cacheCore, int tid, char operation, long address)
     {
-        
+        //std::cout << "address: " << address << " tid: " << tid << "\n";
         prAction prAc; 
         
         handleProcessorAction(cacheCore, tid, operation, address);
