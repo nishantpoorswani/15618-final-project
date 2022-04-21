@@ -27,6 +27,8 @@ namespace cacheSim
                 /* Always update the cache line to invalid state */
                 cacheLine(long addr, long tag):
                     addr(addr), tag(tag), state(0) {}
+                cacheLine(long addr, long tag, int state):
+                    addr(addr), tag(tag), state(state) {}
             };
 
             cache(int sets, int associativity, int blockSize);

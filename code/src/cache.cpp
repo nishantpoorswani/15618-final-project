@@ -96,7 +96,7 @@ namespace cacheSim
     
     if (isHit(caSet, address, &line)) 
     {
-      caSet.push_back(cacheLine(address, getTag(address)));
+      caSet.push_back(cacheLine(address, getTag(address), line->state));
       caSet.erase(line);
       hits++;
     }
