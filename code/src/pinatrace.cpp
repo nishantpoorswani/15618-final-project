@@ -27,13 +27,16 @@
 FILE* trace;
 PIN_LOCK lock;
 /* number of cores */
-int numCores = 3;
+int numCores;
 /* Pointer to multi-core cache objects */
 cacheSim::cache **cacheCore = NULL;
 /* Snooping based cache protocol objects */
 cacheSim::MI MIProtocol;
 cacheSim::MSI MSIProtocol;
 cacheSim::MESI MESIProtocol;
+/* Character array used to hold the protocol which is being used */
+char protocol[10] = {0};
+
 
 // Print a memory read record
 VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) { 
@@ -41,7 +44,18 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
     //fprintf(trace, "%p: R %p %d\n", ip, addr, tid);
     //fprintf(trace, "L %lx,1\n", (long int)addr);
     //cacheCore[0]->cacheLogic('L', (long)addr); 
-    MIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
+    if(!strncmp(protocol, "MI", sizeof("MI")))
+    {
+        MIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
+    }
+    else if(!strncmp(protocol, "MSI", sizeof("MSI")))
+    {
+        MSIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
+    }
+    else if(!strncmp(protocol, "MESI", sizeof("MESI")))
+    {
+        MESIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
+    }
     PIN_ReleaseLock(&lock);
 }
 
@@ -49,8 +63,19 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
 VOID RecordMemWrite(VOID* ip, VOID* addr, THREADID tid) {
     PIN_GetLock(&lock, tid); 
     //fprintf(trace, "S %lx,1\n", (long int)addr);
-    //cacheCore[0]->cacheLogic('S', (long)addr); 
-    MIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr );
+    //cacheCore[0]->cacheLogic('S', (long)addr);
+    if(!strncmp(protocol, "MI", sizeof("MI")))
+    {
+        MIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr);
+    }
+    else if(!strncmp(protocol, "MSI", sizeof("MSI")))
+    {
+        MSIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr);
+    }
+    else if(!strncmp(protocol, "MESI", sizeof("MESI")))
+    {
+        MESIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr);
+    }
     PIN_ReleaseLock(&lock);
 }
 
@@ -144,10 +169,18 @@ int parameterParser(int argc, char *argv[], int *s, int *E, int *b) {
 int main(int argc, char* argv[])
 {
     int S, s, E, b, B;// retValue;
-
-    s=5;
-    E=1;
-    b=5;
+    FILE * fptr;
+    fptr = fopen("cacheSim.config", "r");
+    fscanf(fptr, "%*s %d", &s);
+    fscanf(fptr, "%*s %d", &E);
+    fscanf(fptr, "%*s %d", &b);
+    fscanf(fptr, "%*s %s", protocol);
+    fscanf(fptr, "%*s %d", &numCores);
+    fclose(fptr);
+    printf("s:%d E:%d b:%d protocol:%s numCores:%d\n",s, E, b, protocol, numCores);
+    // s=5;
+    // E=1;
+    // b=5;
     /* Parse command line arguments */
     // retValue = parameterParser(argc, argv, &s, &E, &b);
     // if (retValue < 0) { 
