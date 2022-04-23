@@ -26,7 +26,14 @@ namespace cacheSim
         //std::cout << "Inside processor action after end size: " << caSet.size() << "\n";
         line--;
         //std::cout << "Inside processor action after decrement iterator: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
-        line->state = (int)modified;
+        if(operation == 'S')
+        {
+            line->state = (int)modified;
+        }
+        else if(operation == 'L' && line->state == (int)invalid)
+        {
+            line->state = (int)shared;            
+        }
         //std::cout << "Inside processor action after change line state: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
     }
 
@@ -35,27 +42,31 @@ namespace cacheSim
         /* Based on the processor action, generate a bus action 
         and update the cache line state in other processor caches */
         busAction busAc;
-        busAc = (prAc == prRd) ? busRd : busWr; 
+        busAc = (prAc == prRd) ? busRd : busRdX; 
 
-        if(busAc == busWr)
+        for(int i=0; i < numCores ; i++)
         {
-            for(int i=0; i < numCores ; i++)
+            if(i != tid)
             {
-                if(i != tid)
+                auto& caSet = cacheCore[i]->getLine(address);
+                auto line = find_if(caSet.begin(), caSet.end(),
+                    [address, cacheCore, i](cacheSim::cache::cacheLine l){return (l.tag == cacheCore[i]->getTag(address));});
+                if (line == caSet.end()) {
+                    continue;
+                }
+                //std::cout << "Inside bus action: address: " << address << " tid: " << tid << "\n";
+                /* Update the state of the cache line in other caches to invalid if busAc is busRdX */
+                if(busAc == busRdX)
                 {
-                    /* Update the state of the cache line in other caches to invalid */
-                    auto& caSet = cacheCore[i]->getLine(address);
-                    auto line = find_if(caSet.begin(), caSet.end(),
-                        [address, cacheCore, i](cacheSim::cache::cacheLine l){return (l.tag == cacheCore[i]->getTag(address));});
-                    if (line == caSet.end()) {
-                        continue;
-                    }
-                    //std::cout << "Inside bus action: address: " << address << " tid: " << tid << "\n"; 
                     line->state = (int)invalid;
                     caSet.erase(line);
                 }
+                else
+                {
+                    line->state = (int)shared;
+                }
             }
-        }   
+        }  
     }
 
     void MSI::controller(int numCores, cacheSim::cache **cacheCore, int tid, char operation, long address)

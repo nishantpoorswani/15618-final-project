@@ -22,13 +22,14 @@ namespace cacheSim
             enum lineState
             {
                 invalid = 0,
-                modified = 1
+                shared = 1,
+                modified = 2
             };
 
             enum busAction
             {
                 busRd = 0,
-                busWr = 1
+                busRdX = 1
             };
 
             enum prAction
