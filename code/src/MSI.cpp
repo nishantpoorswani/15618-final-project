@@ -15,8 +15,9 @@
 namespace cacheSim
 {
 
-    void MSI::handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address)
+    void MSI::handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address, prAction prAc)
     {
+        busAction busAc = noBusAction;
         /* Update cache for the requested memory event for a particular cache */
         cacheCore[tid]->cacheLogic(operation, (long)address);
 
@@ -26,23 +27,24 @@ namespace cacheSim
         //std::cout << "Inside processor action after end size: " << caSet.size() << "\n";
         line--;
         //std::cout << "Inside processor action after decrement iterator: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
-        if(operation == 'S')
+        if((prAc == prWr) && (line->state != (int)modified))
         {
             line->state = (int)modified;
+            busAc = busRdX;
         }
-        else if(operation == 'L' && line->state == (int)invalid)
+        else if((prAc == prRd) && (line->state == (int)invalid))
         {
-            line->state = (int)shared;            
+            line->state = (int)shared;
+            busAc = busRd;            
         }
+        return busAc;
         //std::cout << "Inside processor action after change line state: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
     }
 
-    void MSI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address)
+    void MSI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid, busAction busAc, long address)
     {
         /* Based on the processor action, generate a bus action 
         and update the cache line state in other processor caches */
-        busAction busAc;
-        busAc = (prAc == prRd) ? busRd : busRdX; 
 
         for(int i=0; i < numCores ; i++)
         {
@@ -61,7 +63,7 @@ namespace cacheSim
                     line->state = (int)invalid;
                     caSet.erase(line);
                 }
-                else
+                else if(busAc == busRd)
                 {
                     line->state = (int)shared;
                 }
@@ -73,12 +75,12 @@ namespace cacheSim
     {
         //std::cout << "address: " << address << " tid: " << tid << "\n";
         prAction prAc; 
-        
-        handleProcessorAction(cacheCore, tid, operation, address);
-
+        busAction busAc = noBusAction; //bus action
         prAc = (operation == 'L') ? prRd : prWr;
-
-        handleBusAction(numCores, cacheCore, tid, prAc, address);
+        
+        busAc = handleProcessorAction(cacheCore, tid, operation, address, prAc);
+        
+        handleBusAction(numCores, cacheCore, tid, busAc, address);
 
         //cacheCore[0]->cacheLogic(operation, (long)address);
     }

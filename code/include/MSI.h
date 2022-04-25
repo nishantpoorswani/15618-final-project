@@ -28,8 +28,9 @@ namespace cacheSim
 
             enum busAction
             {
-                busRd = 0,
-                busRdX = 1
+                noBusAction = 0,
+                busRd = 1,
+                busRdX = 2
             };
 
             enum prAction
@@ -40,9 +41,9 @@ namespace cacheSim
 
         void controller(int numCores, cache** cacheCore, int tid, char operation, long address);
 
-        void handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address);
+        busAction handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address, prAction prAc);
 
-        void handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address);
+        void handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid, busAction busAc, long address);
     };
 }
 
