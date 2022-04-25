@@ -42,7 +42,7 @@ namespace cacheSim
 
         busAction handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address, prAction prAc);
 
-        void handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address, busAction busAc);
+        void handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,long address, busAction busAc);
     };
 }
 

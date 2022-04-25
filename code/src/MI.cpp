@@ -62,7 +62,7 @@ namespace cacheSim
         //std::cout << "Inside processor action after change line state: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
     }
 
-    void MI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address, busAction busAc)
+    void MI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid, long address, busAction busAc)
     {
 
         for(int i=0; i < numCores ; i++)
@@ -100,7 +100,7 @@ namespace cacheSim
         
         busAc = handleProcessorAction(cacheCore, tid, operation, address, prAc);
 
-        handleBusAction(numCores, cacheCore, tid, prAc, address, busAc);
+        handleBusAction(numCores, cacheCore, tid, address, busAc);
 
         //cacheCore[0]->cacheLogic(operation, (long)address);
     }
