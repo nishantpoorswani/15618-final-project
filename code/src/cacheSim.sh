@@ -47,3 +47,6 @@ done
 echo "Running cacheSim on $program_to_run"
 # Running actual code
 ../pin -t obj-intel64/pinatrace.so -- ./$program_to_run
+
+#Plot graphs
+python3 cacheSim_graph_plotter.py

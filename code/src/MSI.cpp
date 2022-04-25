@@ -15,7 +15,7 @@
 namespace cacheSim
 {
 
-    void MSI::handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address, prAction prAc)
+    MSI::busAction MSI::handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address, prAction prAc)
     {
         busAction busAc = noBusAction;
         /* Update cache for the requested memory event for a particular cache */

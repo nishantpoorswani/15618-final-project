@@ -111,9 +111,15 @@ VOID Instruction(INS ins, VOID* v)
 VOID Fini(INT32 code, VOID* v)
 {
     //fprintf(trace, "#eof\n");
-    printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[0]->hits, cacheCore[0]->misses, cacheCore[0]->evictions);
-    printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[1]->hits, cacheCore[1]->misses, cacheCore[1]->evictions);
-    //fclose(trace);
+    FILE * output;
+    output = fopen("output.csv", "w");
+    fprintf(output, "Cache_ID,Hits,Misses,Evictions\n");
+    for(int i = 0; i < numCores; i++)
+    {
+        printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
+        fprintf(output, "%d,%d,%d,%d\n", i, cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
+    }
+    fclose(output);
 }
 
 /* ===================================================================== */
