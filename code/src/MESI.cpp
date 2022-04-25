@@ -15,60 +15,130 @@
 namespace cacheSim
 {
 
-    void MESI::handleProcessorAction(cacheSim::cache **cacheCore, int tid, char operation, long address)
+    MESI::busAction MESI::handleProcessorAction(int numCores, cacheSim::cache **cacheCore, int tid, char operation, long address, prAction prAc)
     {
+        lineState prevLineState;
+        busAction busAc = noBusAction;
+
         /* Update cache for the requested memory event for a particular cache */
         cacheCore[tid]->cacheLogic(operation, (long)address);
 
         /* Update the state of the cache line to modified */
         auto& caSet = cacheCore[tid]->getLine(address);
         std::list<cacheSim::cache::cacheLine>::iterator line = caSet.end();
-        //std::cout << "Inside processor action after end size: " << caSet.size() << "\n";
         line--;
-        //std::cout << "Inside processor action after decrement iterator: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
-        line->state = (int)modified;
-        //std::cout << "Inside processor action after change line state: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
-    }
 
-    void MESI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid,prAction prAc, long address)
-    {
-        /* Based on the processor action, generate a bus action 
-        and update the cache line state in other processor caches */
-        busAction busAc;
-        busAc = (prAc == prRd) ? busRd : busWr; 
+        /* Get the previous line state */
+        prevLineState = (lineState) line->state;
 
-        if(busAc == busWr)
-        {
+        /* If the cache line is not present in the processor's cache and is a processor read */
+        if((prAc = prRd) && (prevLineState == invalid)) 
+        {   
+            bool linePresent = false;
             for(int i=0; i < numCores ; i++)
             {
                 if(i != tid)
                 {
-                    /* Update the state of the cache line in other caches to invalid */
                     auto& caSet = cacheCore[i]->getLine(address);
                     auto line = find_if(caSet.begin(), caSet.end(),
                         [address, cacheCore, i](cacheSim::cache::cacheLine l){return (l.tag == cacheCore[i]->getTag(address));});
                     if (line == caSet.end()) {
                         continue;
                     }
-                    //std::cout << "Inside bus action: address: " << address << " tid: " << tid << "\n"; 
+                    linePresent = true;
+                    break;
+                }
+            }
+            //If the cache line is present in another processor's cache update the cache line to be shared
+            if (linePresent ==true)
+            {
+                line->state = (int)shared;
+            }
+            else //If the cache line is not present in another processor's cache update the cache line to be exclusive
+            {
+                line->state =(int) exclusive;
+            }
+            busAc = busRd;
+        }
+        
+        /* If the cache line is present in the processor's cache and 
+          is a processor read, need not update the cache line state */
+
+        /* If the current request is a processor write */
+        if(prAc == prWr)
+        {
+            /* If the previous cache line state is in invalid or shared state
+               it is updated to modified and genrate a read exclusive bus action */
+            if((prevLineState == invalid) || (prevLineState == shared))
+            {
+                line->state = (int)modified;
+                busAc = busRdX;
+            }
+            /* If the previous cache line state is in exclusive state
+               it is updated to modified and do not generate a bus action */
+            else if(prevLineState == exclusive)
+            {
+                line->state =(int)modified;
+                busAc = noBusAction;
+            }
+            /* If the If the previous cache line state is in modified state,
+               do not update the cache line state or generate a bus action */
+        }
+        
+        return busAc;
+    }
+
+    void MESI::handleBusAction(int numCores, cacheSim::cache **cacheCore, int tid, busAction busAc, long address)
+    {
+        for(int i=0; i < numCores ; i++)
+        {
+            if(i != tid)
+            {
+                lineState prevLineState;
+
+                auto& caSet = cacheCore[i]->getLine(address);
+                auto line = find_if(caSet.begin(), caSet.end(),
+                    [address, cacheCore, i](cacheSim::cache::cacheLine l){return (l.tag == cacheCore[i]->getTag(address));});
+                if (line == caSet.end()) {
+                    continue;
+                }
+                /* Get the previous line state */
+                prevLineState = (lineState) line->state;
+                /* If the bus action is bus read
+                    update the cache line state to shared */
+                if(busAc == busRd)
+                {
+                    if((prevLineState == exclusive) || (prevLineState == modified))
+                    {
+                        line->state = (int)shared;
+                    }
+                    else{
+                        //Add an assert to check if the cache line is in shared state
+                        /* Cache line state is shared and it has 
+                           to remain in the sahared state */
+                    }
+                }
+                /* If the bus action is bus read exclusive,
+                  update the cache line to be invalid and remove
+                  the cache line from the cache */
+                if(busAc == busRdX)
+                { //Add an assert to check if the previous line is not invalid
                     line->state = (int)invalid;
                     caSet.erase(line);
                 }
             }
-        }   
+        } 
     }
 
     void MESI::controller(int numCores, cacheSim::cache **cacheCore, int tid, char operation, long address)
     {
-        //std::cout << "address: " << address << " tid: " << tid << "\n";
-        prAction prAc; 
+        prAction prAc;  //processor action
+        busAction busAc = noBusAction; //bus action
         
-        handleProcessorAction(cacheCore, tid, operation, address);
-
         prAc = (operation == 'L') ? prRd : prWr;
 
-        handleBusAction(numCores, cacheCore, tid, prAc, address);
+        busAc = handleProcessorAction(numCores, cacheCore, tid, operation, address, prAc);
 
-        //cacheCore[0]->cacheLogic(operation, (long)address);
+        handleBusAction(numCores, cacheCore, tid, busAc, address);
     }
 }
