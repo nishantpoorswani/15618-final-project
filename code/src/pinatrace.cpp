@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
     S = 1 << s;
     B = 1 << b;
 
-    cacheCore = new (cacheSim::cache*[3]);
+    cacheCore = new cacheSim::cache*[numCores];
 
     for(int i=0; i<numCores; i++)
     {

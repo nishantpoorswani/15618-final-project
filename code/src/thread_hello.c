@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define NUM_THREADS 2
+#define NUM_THREADS 5
 
 void *PrintHello(void *threadid) {
    long tid;
