@@ -118,8 +118,10 @@ VOID Fini(INT32 code, VOID* v)
     {
         printf("hits:%d, misses:%d, evictions:%d \n", cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
         fprintf(output, "%d,%d,%d,%d\n", i, cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
+        delete cacheCore[i];
     }
     fclose(output);
+    delete cacheCore;
 }
 
 /* ===================================================================== */
