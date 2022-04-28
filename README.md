@@ -100,6 +100,21 @@ We're attaching a screenshot of the stats obtained from our event-driven simulat
 
 Once we implement the different snooping-based cache coherence protocols, there is a challenge to verify the correctness of these protocols. Since, it's event driven we still need to think of the best possible way to verify the correctness. 
 
+## MILESTONE 2
+
+**Update since Milestone 1:**
+1) Implemented MI, MSI, MESI snooping based cache coherence protocols. 
+2) Integrated the above protocols to our event-driven cache simulator.
+3) Integrated graphical visualisation to compare per thread misses/hits/evictions
+
+**Pending tasks:**
+1) Compare different snooping protocols on the same parallel program
+2) Provide cache statistics for specific functions
+
+**Ideas to further the project**
+1) Provide cache coherent traffic statistics 
+
+
 ## AUTHORS:
 
 Nishant Poorswani [npoorswa@andrew.cmu.edu](npoorswa@andrew.cmu.edu)
