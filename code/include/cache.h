@@ -16,9 +16,9 @@ namespace cacheSim
     class cache 
     {
         public:
-            int hits;
-            int misses;
-            int evictions;
+            unsigned long hits;
+            unsigned long misses;
+            unsigned long evictions;
             struct cacheLine {
                 long addr;  //add based on usage
                 long tag;

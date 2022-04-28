@@ -1,15 +1,17 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
+void PrintHello2(int threadid);
 
 using namespace std;
 
-#define NUM_THREADS 5
+#define NUM_THREADS 2
 
 void *PrintHello(void *threadid) {
    long tid;
    tid = (long)threadid;
    cout << "Hello World! Thread ID, " << tid << endl;
+   PrintHello2(tid);
    pthread_exit(NULL);
 }
 
@@ -27,5 +29,12 @@ int main () {
          exit(-1);
       }
    }
+   //PrintHello2(1);
+   //PrintHello2(5);
+   //PrintHello2(15);
    pthread_exit(NULL);
+}
+
+void PrintHello2(int threadid) {
+   cout << "Hello World! Thread ID, " << threadid << endl;
 }
