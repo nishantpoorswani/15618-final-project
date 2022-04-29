@@ -1,0 +1,4 @@
+Func_name,Hits,Misses,Evictions
+main,369642,142646,142614
+PrintHello2,1107,454,380
+PrintHello,52,54,16

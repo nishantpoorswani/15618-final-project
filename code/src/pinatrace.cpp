@@ -44,9 +44,9 @@ std::vector<std::string> userFuncs;
 
 typedef struct {
     std::string funcName;
-    unsigned long beforeEvic[3];
-    unsigned long beforeFuncHits[3];
-    unsigned long beforeFuncMisses[3];
+    unsigned long *beforeEvic;
+    unsigned long *beforeFuncHits;
+    unsigned long *beforeFuncMisses;
     unsigned long hits;
     unsigned long misses;
     unsigned long evictions;
@@ -58,17 +58,13 @@ funcStats_t **funcStats = NULL;
 // This function is called before every instruction is executed
 VOID funcEntry(std::string funcName, THREADID tid) {  
     PIN_GetLock(&lock, tid);
-    //std::cout << "Before func:" << funcName << " " << tid << std::endl;
     for(unsigned int i=0; i<userFuncs.size(); i++)
     {
         if(!funcName.compare(funcStats[i]->funcName))
         {
-            std::cout << "Index" << i << " Before func:" << funcName << " " << tid << std::endl;
             funcStats[i]->beforeFuncHits[tid] = cacheCore[tid]->hits;
             funcStats[i]->beforeFuncMisses[tid] = cacheCore[tid]->misses;
-            std::cout << "Reached before in entry" << std::endl;
             funcStats[i]->beforeEvic[tid] = cacheCore[tid]->evictions;
-            std::cout << "Reached after in entry" << std::endl;
             PIN_ReleaseLock(&lock);
             return;
         }
@@ -79,17 +75,13 @@ VOID funcEntry(std::string funcName, THREADID tid) {
 // This function is called after every instruction is executed
 VOID funcExit(std::string funcName, THREADID tid) { 
     PIN_GetLock(&lock, tid);    
-    //std::cout << "After func:" << funcName << " " << tid << std::endl;
     for(unsigned int i=0; i<userFuncs.size(); i++)
     {
         if(!funcName.compare(funcStats[i]->funcName))
         {
-            std::cout << "Index" << i << " After func:" << funcName << " " << tid << std::endl;
             funcStats[i]->hits += cacheCore[tid]->hits - funcStats[i]->beforeFuncHits[tid];
             funcStats[i]->misses += cacheCore[tid]->misses  - funcStats[i]->beforeFuncMisses[tid];
-            std::cout << "Reached before in exit" << funcName <<std::endl;
             funcStats[i]->evictions += cacheCore[tid]->evictions - funcStats[i]->beforeEvic[tid];
-            std::cout << "Reached after in exit" << funcName << std::endl;
             PIN_ReleaseLock(&lock);
             return;
         }
@@ -100,9 +92,6 @@ VOID funcExit(std::string funcName, THREADID tid) {
 // Print a memory read record
 VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) { 
     PIN_GetLock(&lock, tid);
-    //fprintf(trace, "%p: R %p %d\n", ip, addr, tid);
-    //fprintf(trace, "L %lx,1\n", (long int)addr);
-    //cacheCore[0]->cacheLogic('L', (long)addr); 
     if(!strncmp(protocol, "MI", sizeof("MI")))
     {
         MIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
@@ -121,8 +110,6 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
 // Print a memory write record
 VOID RecordMemWrite(VOID* ip, VOID* addr, THREADID tid) {
     PIN_GetLock(&lock, tid); 
-    //fprintf(trace, "S %lx,1\n", (long int)addr);
-    //cacheCore[0]->cacheLogic('S', (long)addr);
     if(!strncmp(protocol, "MI", sizeof("MI")))
     {
         MIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr);
@@ -170,9 +157,7 @@ VOID Instruction(INS ins, VOID* v)
 VOID Routine(RTN rtn, VOID *v) {
     std::string name = PIN_UndecorateSymbolName(RTN_Name(rtn).c_str(),
                        UNDECORATION_NAME_ONLY);
-    std::vector<std::string>::iterator it;
-    std::cout << "RTN_NAME:" <<RTN_Name(rtn) << std::endl;
-    //std::cout << "Func_name after verification: " << userFunc << " and name obtained:" << name << std::endl;
+    // std::cout << "RTN_NAME:" <<RTN_Name(rtn) << std::endl;
     RTN_Open(rtn);
     // Insert a call at the entry point of a routine to increment the call count
     RTN_InsertCall(rtn, IPOINT_BEFORE, (AFUNPTR)funcEntry, IARG_PTR, new std::string(name), IARG_THREAD_ID, IARG_END);
@@ -206,25 +191,35 @@ VOID Routine(RTN rtn, VOID *v) {
 
 VOID Fini(INT32 code, VOID* v)
 {
-    //fprintf(trace, "#eof\n");
-    printf("Inside fini\n");
     FILE * output;
     output = fopen("output.csv", "w");
     fprintf(output, "Cache_ID,Hits,Misses,Evictions\n");
     for(int i = 0; i < numCores; i++)
     {
-        printf("hits:%lu, misses:%lu, evictions:%lu \n", cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
+        printf("Thread_ID:%d,hits:%lu, misses:%lu, evictions:%lu \n", i, cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
         fprintf(output, "%d,%lu,%lu,%lu\n", i, cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
         delete cacheCore[i];
     }
+    fclose(output);
+    FILE * output_functions;
+    output_functions = fopen("output_funcs.csv", "w");
+    fprintf(output_functions, "Func_name,Hits,Misses,Evictions\n");
     for(unsigned int i=0; i < userFuncs.size(); i++)
     {
-        // delete funcStats[i]->beforeFuncHits;
-        // delete funcStats[i]->beforeFuncMisses;
-        // delete funcStats[i]->beforeEvic;
+        for(int j=1; j < numCores; j++)
+        {
+            funcStats[i]->beforeFuncHits[0] += funcStats[i]->beforeFuncHits[j];
+            funcStats[i]->beforeFuncMisses[0] += funcStats[i]->beforeFuncMisses[j];
+            funcStats[i]->beforeEvic[0] += funcStats[i]->beforeEvic[j];
+        }
+        fprintf(output_functions, "%s,%lu,%lu,%lu\n", funcStats[i]->funcName.c_str(), funcStats[i]->beforeFuncHits[0], funcStats[i]->beforeFuncMisses[0], funcStats[i]->beforeEvic[0]);
+        printf("%s,%lu,%lu,%lu\n", funcStats[i]->funcName.c_str(), funcStats[i]->beforeFuncHits[0], funcStats[i]->beforeFuncMisses[0], funcStats[i]->beforeEvic[0]); 
+        delete funcStats[i]->beforeFuncHits;
+        delete funcStats[i]->beforeFuncMisses;
+        delete funcStats[i]->beforeEvic;
         delete funcStats[i];
     }
-    fclose(output);
+    fclose(output_functions);
     delete cacheCore;
     delete funcStats;
 }
@@ -301,7 +296,7 @@ int main(int argc, char* argv[])
     {
         cacheCore[i] = new cacheSim::cache(S, E, B);
     }
-
+    /* Init Symbols (Needed for functions) */
     PIN_InitSymbols(); 
     if (PIN_Init(argc, argv)) return Usage();
 
@@ -313,17 +308,14 @@ int main(int argc, char* argv[])
     while (std::getline(configFile, st)) {
         userFuncs.push_back((st));
     }
-
-    std::cout << userFuncs.size() << std::endl;
-
     funcStats = new funcStats_t*[userFuncs.size()];
 
     for(unsigned int i=0; i < userFuncs.size(); i++)
     {
         funcStats[i] = new funcStats_t;
-        // funcStats[i]->beforeEvic = new unsigned long (numCores);
-        // funcStats[i]->beforeFuncHits = new unsigned long (numCores);
-        // funcStats[i]->beforeFuncMisses = new unsigned long (numCores);
+        funcStats[i]->beforeEvic = new unsigned long[numCores];
+        funcStats[i]->beforeFuncHits = new unsigned long[numCores];
+        funcStats[i]->beforeFuncMisses = new unsigned long[numCores];
         funcStats[i]->funcName = userFuncs[i];
     }
 
