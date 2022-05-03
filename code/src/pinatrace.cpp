@@ -221,19 +221,26 @@ VOID Fini(INT32 code, VOID* v)
         delete funcStats[i]->beforeEvic;
         delete funcStats[i];
     }
+    FILE * output_traffic;
+    output_traffic = fopen("output_traffic.csv", "w");
+    fprintf(output_traffic, "Bus Requests,BusRdX,Invalidations\n");
     if(!strncmp(protocol, "MI", sizeof("MI")))
     {
+        fprintf(output_traffic, "%lu,%lu,%lu\n", MIProtocol.busReqs, MIProtocol.busRdXReqs, MIProtocol.invalidations);
         printf("MI: Bus Requests:%lu, Exclusive bus reads:%lu, invalidations:%lu \n", MIProtocol.busReqs, MIProtocol.busRdXReqs, MIProtocol.invalidations);
     }
     else if(!strncmp(protocol, "MSI", sizeof("MSI")))
     {
+        fprintf(output_traffic, "%lu,%lu,%lu\n", MSIProtocol.busReqs, MSIProtocol.busRdXReqs, MSIProtocol.invalidations);
         printf("MSI: Bus Requests:%lu, Exclusive bus reads:%lu, invalidations:%lu \n", MSIProtocol.busReqs, MSIProtocol.busRdXReqs, MSIProtocol.invalidations);
     }
     else if(!strncmp(protocol, "MESI", sizeof("MESI")))
     {
+        fprintf(output_traffic, "%lu,%lu,%lu\n", MESIProtocol.busReqs, MESIProtocol.busRdXReqs, MESIProtocol.invalidations);
         printf("MESI: Bus Requests:%lu, Exclusive bus reads:%lu, invalidations:%lu \n", MESIProtocol.busReqs, MESIProtocol.busRdXReqs, MESIProtocol.invalidations);
     }
     fclose(output_functions);
+    fclose(output_traffic);
     delete cacheCore;
     delete funcStats;
 }

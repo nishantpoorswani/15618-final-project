@@ -8,24 +8,38 @@ import matplotlib.pyplot as plt
 data = pd.read_csv('output.csv')
   
 df = pd.DataFrame(data)
+
+#specify the columns to sum
+cols = ['Hits']
+hits = df[cols].sum(axis=0)
+#specify the columns to sum
+cols = ['Misses']
+misses = df[cols].sum(axis=0)
+#specify the columns to sum
+cols = ['Evictions']
+
+evictions = df[cols].sum(axis=0)
+print("evictions:", evictions[0])
+
+x = [1, 2, 3]
+ax1 = plt.subplot()
+ax1.set_xticks(x)
+
+# plot bar chart
+
+plt.bar(x,[hits[0],misses[0],evictions[0]])
+
+# Define tick labels
+
+ax1.set_xticklabels(["Hits","Misses","Evictions"]) 
+plt.title('Cache Stats: Total number of hits/misses/evictions')
+plt.ylabel('Number of hits/misses/evictions')
+plt.show()
   
 id = list(df.iloc[:, 0])
 hits = list(df.iloc[:, 1])
 misses = list(df.iloc[:, 2])
 eviction = list(df.iloc[:, 3])
-
-plt.bar(id, hits)
-plt.title('Cache Performance: Number of hits per thread')
-plt.xlabel('Thread ID')
-plt.ylabel('Number of hits')
-
-plt.show()
-
-plt.bar(id, misses)
-plt.title('Cache Performance: Number of misses per thread')
-plt.xlabel('Cache ID')
-plt.ylabel('Number of misses')
-plt.show()
 
 X_axis = np.arange(len(id))
 
@@ -59,4 +73,28 @@ plt.xlabel("Func_names")
 plt.ylabel("Cache hits/misses/evictions")
 plt.title("Cache performance wrt functions")
 plt.legend()
+plt.show()
+
+# Initialize the lists for X and Y
+data = pd.read_csv('output_traffic.csv')
+  
+df = pd.DataFrame(data)
+
+bus_req = df.iloc[0, 0]
+busRdX = df.iloc[0, 1]
+invalidations = df.iloc[0, 2]
+
+x = [1, 2, 3]
+ax1 = plt.subplot()
+ax1.set_xticks(x)
+
+# plot bar chart
+
+plt.bar(x,[bus_req,busRdX,invalidations])
+
+# Define tick labels
+
+ax1.set_xticklabels(["Bus Request","busRdX","Invalidations"]) 
+plt.title('Cache Stats: Coherence Traffic')
+plt.ylabel('Count')
 plt.show()
