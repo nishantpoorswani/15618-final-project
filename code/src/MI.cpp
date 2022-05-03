@@ -36,6 +36,7 @@ namespace cacheSim
             if (prevLineState == invalid)
             {
                 busAc = busRd;
+                busReqs++;
                 line->state = (int)modified;
             }
             else
@@ -49,12 +50,17 @@ namespace cacheSim
             if (prevLineState == invalid)
             {
                 busAc = busWr;
+                busReqs++;
+                busRdXReqs++;
                 line->state = (int)modified;
             }
             else
             {
                 /*Line is expected to be in modified state */
                 /* Can add an assert here to check above */
+                busAc = busWr;
+                busReqs++;
+                busRdXReqs++;
             }    
         }
 
@@ -81,6 +87,7 @@ namespace cacheSim
                 {
                     line->state = (int)invalid;
                     caSet.erase(line);
+                    invalidations++;
                 }
                 else
                 {

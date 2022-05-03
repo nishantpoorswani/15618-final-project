@@ -31,11 +31,14 @@ namespace cacheSim
         {
             line->state = (int)modified;
             busAc = busRdX;
+            busRdXReqs++;
+            busReqs++;
         }
         else if((prAc == prRd) && (line->state == (int)invalid))
         {
             line->state = (int)shared;
-            busAc = busRd;            
+            busAc = busRd;
+            busReqs++;            
         }
         return busAc;
         //std::cout << "Inside processor action after change line state: address: " << line->addr << " " << line->tag << " " << line->state << "\n";
@@ -62,6 +65,7 @@ namespace cacheSim
                 {
                     line->state = (int)invalid;
                     caSet.erase(line);
+                    invalidations++;
                 }
                 else if(busAc == busRd)
                 {

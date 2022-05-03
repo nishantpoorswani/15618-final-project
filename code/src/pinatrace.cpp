@@ -102,6 +102,7 @@ VOID RecordMemRead(VOID* ip, VOID* addr, THREADID tid) {
     }
     else if(!strncmp(protocol, "MESI", sizeof("MESI")))
     {
+        //std::cout<<"MESI called L" << std::endl; 
         MESIProtocol.controller(numCores, cacheCore, tid, 'L', (long)addr);
     }
     PIN_ReleaseLock(&lock);
@@ -120,6 +121,7 @@ VOID RecordMemWrite(VOID* ip, VOID* addr, THREADID tid) {
     }
     else if(!strncmp(protocol, "MESI", sizeof("MESI")))
     {
+        //std::cout<<"MESI called S" << std::endl;
         MESIProtocol.controller(numCores, cacheCore, tid, 'S', (long)addr);
     }
     PIN_ReleaseLock(&lock);
@@ -218,6 +220,18 @@ VOID Fini(INT32 code, VOID* v)
         delete funcStats[i]->beforeFuncMisses;
         delete funcStats[i]->beforeEvic;
         delete funcStats[i];
+    }
+    if(!strncmp(protocol, "MI", sizeof("MI")))
+    {
+        printf("MI: Bus Requests:%lu, Exclusive bus reads:%lu, invalidations:%lu \n", MIProtocol.busReqs, MIProtocol.busRdXReqs, MIProtocol.invalidations);
+    }
+    else if(!strncmp(protocol, "MSI", sizeof("MSI")))
+    {
+        printf("MSI: Bus Requests:%lu, Exclusive bus reads:%lu, invalidations:%lu \n", MSIProtocol.busReqs, MSIProtocol.busRdXReqs, MSIProtocol.invalidations);
+    }
+    else if(!strncmp(protocol, "MESI", sizeof("MESI")))
+    {
+        printf("MESI: Bus Requests:%lu, Exclusive bus reads:%lu, invalidations:%lu \n", MESIProtocol.busReqs, MESIProtocol.busRdXReqs, MESIProtocol.invalidations);
     }
     fclose(output_functions);
     delete cacheCore;

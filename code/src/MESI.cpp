@@ -32,7 +32,7 @@ namespace cacheSim
         prevLineState = (lineState) line->state;
 
         /* If the cache line is not present in the processor's cache and is a processor read */
-        if((prAc = prRd) && (prevLineState == invalid)) 
+        if((prAc == prRd) && (prevLineState == invalid)) 
         {   
             bool linePresent = false;
             for(int i=0; i < numCores ; i++)
@@ -59,6 +59,7 @@ namespace cacheSim
                 line->state =(int) exclusive;
             }
             busAc = busRd;
+            busReqs++;
         }
         
         /* If the cache line is present in the processor's cache and 
@@ -73,6 +74,8 @@ namespace cacheSim
             {
                 line->state = (int)modified;
                 busAc = busRdX;
+                busRdXReqs++;
+                busReqs++;
             }
             /* If the previous cache line state is in exclusive state
                it is updated to modified and do not generate a bus action */
@@ -125,6 +128,7 @@ namespace cacheSim
                 { //Add an assert to check if the previous line is not invalid
                     line->state = (int)invalid;
                     caSet.erase(line);
+                    invalidations++; 
                 }
             }
         } 

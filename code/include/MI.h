@@ -19,6 +19,9 @@ namespace cacheSim
     class MI
     {
         public:
+            unsigned long busReqs;
+            unsigned long busRdXReqs;
+            unsigned long invalidations;
             enum lineState
             {
                 invalid = 0,
