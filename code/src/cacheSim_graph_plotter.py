@@ -3,9 +3,13 @@ import numpy as np
 import pandas as pd
 #matplotlib.use('GTK3Agg')
 import matplotlib.pyplot as plt
+import sys
+
+filename1 = sys.argv[1]
+filename2 = sys.argv[2]
 
 # Initialize the lists for X and Y
-data = pd.read_csv('output.csv')
+data = pd.read_csv(filename1)
   
 df = pd.DataFrame(data)
 
@@ -19,7 +23,6 @@ misses = df[cols].sum(axis=0)
 cols = ['Evictions']
 
 evictions = df[cols].sum(axis=0)
-print("evictions:", evictions[0])
 
 x = [1, 2, 3]
 ax1 = plt.subplot()
@@ -76,7 +79,7 @@ plt.legend()
 plt.show()
 
 # Initialize the lists for X and Y
-data = pd.read_csv('output_traffic.csv')
+data = pd.read_csv(filename2)
   
 df = pd.DataFrame(data)
 

@@ -193,7 +193,8 @@ VOID Routine(RTN rtn, VOID *v) {
 
 VOID Fini(INT32 code, VOID* v)
 {
-    char output_filename[256];
+    char output_filename[256] = {0};
+    char output_traffic_filename[256] = {0};
     FILE * output;
     sprintf(output_filename, "output_%s.csv", protocol);
     output = fopen(output_filename, "w");
@@ -218,7 +219,8 @@ VOID Fini(INT32 code, VOID* v)
         delete funcStats[i];
     }
     FILE * output_traffic;
-    output_traffic = fopen("output_traffic.csv", "w");
+    sprintf(output_traffic_filename, "output_traffic_%s.csv", protocol);
+    output_traffic = fopen(output_traffic_filename, "w");
     fprintf(output_traffic, "Bus Requests,BusRdX,Invalidations\n");
     if(!strncmp(protocol, "MI", sizeof("MI")))
     {
