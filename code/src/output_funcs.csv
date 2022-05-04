@@ -1,4 +1,4 @@
 Func_name,Hits,Misses,Evictions
-main,625954,27122,27080
-PrintHello2,0,0,0
-PrintHello,0,0,0
+find_random_path,0,0,0
+find_minimum_path,42928554,62399679,62389313
+update_cost_matrix,0,0,0

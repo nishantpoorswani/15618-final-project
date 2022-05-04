@@ -19,7 +19,6 @@ cols = ['Evictions']
 
 evictions_mi = df[cols].sum(axis=0)
 
-print("Here")
 # Initialize the lists for X and Y
 data = pd.read_csv('output_MSI.csv')
   
@@ -64,5 +63,52 @@ plt.xticks(X_axis, ["MI","MSI","MESI"])
 plt.xlabel("Protocols")
 plt.ylabel("Cache hits/misses/evictions")
 plt.title("Cache performance for all protocols")
+plt.legend()
+plt.show()
+
+# Initialize the lists for X and Y
+data = pd.read_csv('output_traffic_MI.csv')
+  
+df = pd.DataFrame(data)
+#specify the columns to sum
+
+bus_req_mi = df.iloc[0, 0]
+busRdX_mi = df.iloc[0, 1]
+invalidations_mi = df.iloc[0, 2]
+
+# Initialize the lists for X and Y
+data = pd.read_csv('output_traffic_MSI.csv')
+  
+df = pd.DataFrame(data)
+#specify the columns to sum
+
+bus_req_msi = df.iloc[0, 0]
+busRdX_msi = df.iloc[0, 1]
+invalidations_msi = df.iloc[0, 2]
+
+# Initialize the lists for X and Y
+data = pd.read_csv('output_traffic_MESI.csv')
+  
+df = pd.DataFrame(data)
+#specify the columns to sum
+
+bus_req_mesi = df.iloc[0, 0]
+busRdX_mesi = df.iloc[0, 1]
+invalidations_mesi = df.iloc[0, 2]
+
+bus_req = [bus_req_mi, bus_req_msi, bus_req_mesi]
+busRdX = [busRdX_mi, busRdX_msi, busRdX_mesi]
+invalidations = [invalidations_mi, invalidations_msi, invalidations_mesi]
+id = [0, 1, 2]
+X_axis = np.arange(len(id))
+
+plt.bar(X_axis - 0.3, bus_req, 0.2, label = 'Bus Request')
+plt.bar(X_axis - 0.1, busRdX, 0.2, label = 'busRdX')
+plt.bar(X_axis + 0.1, invalidations, 0.2, label = 'Invalidations')
+
+# Define tick labels
+plt.xticks(X_axis, ["MI","MSI","MESI"])
+plt.title('Cache Stats: Coherence Traffic for all Protocols')
+plt.ylabel('Count')
 plt.legend()
 plt.show()

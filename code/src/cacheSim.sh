@@ -28,7 +28,13 @@ do
   elif [ ${!i} = "-p" ];
   then
     ((i = i + 1))
-    echo "Protocol: ${!i}" >> $filename
+    protocol=${!i}
+    if [ ${!i} = "all" ];
+    then
+      echo "Protocol: MI" >> $filename
+    else
+      echo "Protocol: ${!i}" >> $filename
+    fi
   elif [ ${!i} = "-n" ];
   then
     ((i = i + 1))
@@ -47,6 +53,14 @@ done
 echo "Running cacheSim on $program_to_run"
 # Running actual code
 ../pin -t obj-intel64/pinatrace.so -- ./$program_to_run
-
-#Plot graphs
-python3 cacheSim_graph_plotter.py
+if [ $protocol = "all" ];
+then
+  sed -i 's/MI/MSI/' $filename
+  ../pin -t obj-intel64/pinatrace.so -- ./$program_to_run
+  sed -i 's/MSI/MESI/' $filename
+  ../pin -t obj-intel64/pinatrace.so -- ./$program_to_run
+  python3 cacheSim_plotter_all.py
+else
+  #Plot graphs
+  python3 cacheSim_graph_plotter.py output_$protocol.csv output_traffic_$protocol.csv
+fi
