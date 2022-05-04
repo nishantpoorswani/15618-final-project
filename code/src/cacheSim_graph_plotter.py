@@ -25,6 +25,7 @@ cols = ['Evictions']
 evictions = df[cols].sum(axis=0)
 
 x = [1, 2, 3]
+y = [hits[0],misses[0],evictions[0]]
 ax1 = plt.subplot()
 ax1.set_xticks(x)
 
@@ -37,6 +38,12 @@ plt.bar(x,[hits[0],misses[0],evictions[0]])
 ax1.set_xticklabels(["Hits","Misses","Evictions"]) 
 plt.title('Cache Stats: Total number of hits/misses/evictions')
 plt.ylabel('Number of hits/misses/evictions')
+ax1.text(x[0]-0.25, hits[0] + .25, str(hits[0]),
+            color = 'red', fontweight = 'bold')
+ax1.text(x[1]-0.25, misses[0] + .25, str(misses[0]),
+            color = 'red', fontweight = 'bold')
+ax1.text(x[2]-0.25, evictions[0] + .25, str(evictions[0]),
+            color = 'red', fontweight = 'bold')
 plt.show()
   
 id = list(df.iloc[:, 0])
@@ -100,4 +107,10 @@ plt.bar(x,[bus_req,busRdX,invalidations])
 ax1.set_xticklabels(["Bus Request","busRdX","Invalidations"]) 
 plt.title('Cache Stats: Coherence Traffic')
 plt.ylabel('Count')
+ax1.text(x[0]-0.25, bus_req + .25, str(bus_req),
+            color = 'red', fontweight = 'bold')
+ax1.text(x[1]-0.25, busRdX + .25, str(busRdX),
+            color = 'red', fontweight = 'bold')
+ax1.text(x[2]-0.1, invalidations + .25, str(invalidations),
+            color = 'red', fontweight = 'bold')
 plt.show()
