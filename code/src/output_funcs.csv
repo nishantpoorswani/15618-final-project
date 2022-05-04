@@ -1,4 +1,4 @@
 Func_name,Hits,Misses,Evictions
-main,380666,128822,128790
-PrintHello2,1115,461,382
-PrintHello,52,54,16
+main,625954,27122,27080
+PrintHello2,0,0,0
+PrintHello,0,0,0

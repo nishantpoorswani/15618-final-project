@@ -196,7 +196,7 @@ VOID Fini(INT32 code, VOID* v)
     FILE * output;
     output = fopen("output.csv", "w");
     fprintf(output, "Cache_ID,Hits,Misses,Evictions\n");
-    for(int i = 0; i < numCores; i++)
+    for(int i = 1; i < numCores; i++)
     {
         printf("Thread_ID:%d,hits:%lu, misses:%lu, evictions:%lu \n", i, cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
         fprintf(output, "%d,%lu,%lu,%lu\n", i, cacheCore[i]->hits, cacheCore[i]->misses, cacheCore[i]->evictions);
@@ -208,14 +208,8 @@ VOID Fini(INT32 code, VOID* v)
     fprintf(output_functions, "Func_name,Hits,Misses,Evictions\n");
     for(unsigned int i=0; i < userFuncs.size(); i++)
     {
-        for(int j=1; j < numCores; j++)
-        {
-            funcStats[i]->beforeFuncHits[0] += funcStats[i]->beforeFuncHits[j];
-            funcStats[i]->beforeFuncMisses[0] += funcStats[i]->beforeFuncMisses[j];
-            funcStats[i]->beforeEvic[0] += funcStats[i]->beforeEvic[j];
-        }
-        fprintf(output_functions, "%s,%lu,%lu,%lu\n", funcStats[i]->funcName.c_str(), funcStats[i]->beforeFuncHits[0], funcStats[i]->beforeFuncMisses[0], funcStats[i]->beforeEvic[0]);
-        printf("%s,%lu,%lu,%lu\n", funcStats[i]->funcName.c_str(), funcStats[i]->beforeFuncHits[0], funcStats[i]->beforeFuncMisses[0], funcStats[i]->beforeEvic[0]); 
+        fprintf(output_functions, "%s,%lu,%lu,%lu\n", funcStats[i]->funcName.c_str(), funcStats[i]->hits, funcStats[i]->misses, funcStats[i]->evictions);
+        printf("%s,%lu,%lu,%lu\n", funcStats[i]->funcName.c_str(), funcStats[i]->hits, funcStats[i]->misses, funcStats[i]->evictions); 
         delete funcStats[i]->beforeFuncHits;
         delete funcStats[i]->beforeFuncMisses;
         delete funcStats[i]->beforeEvic;
