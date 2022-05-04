@@ -193,8 +193,10 @@ VOID Routine(RTN rtn, VOID *v) {
 
 VOID Fini(INT32 code, VOID* v)
 {
+    char output_filename[256];
     FILE * output;
-    output = fopen("output.csv", "w");
+    sprintf(output_filename, "output_%s.csv", protocol);
+    output = fopen(output_filename, "w");
     fprintf(output, "Cache_ID,Hits,Misses,Evictions\n");
     for(int i = 1; i < numCores; i++)
     {
