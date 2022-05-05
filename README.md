@@ -2,32 +2,32 @@
 
 ## SUMMARY:
 
-We are going to implement an event-driven multi-core cache simulator. This simulator will support different snooping based cache coherence schemes. It will analyze memory accesses at run time and report various cache performance metrics. This simulator based tool will also provide cache performance optimization recommendations to the user to improve memory performance.
+We have implemented an execution-driven multi-core cache simulator with fast forward capabilities. This simulator supports different snooping based cache coherence schemes. It analyzes memory accesses at run time and reports various cache performance metrics. It has added features to visualize function specific cache statistics, comparison of snooping based protocols for a given program and coherence traffic.
 
 ## BACKGROUND:
 
-This project is an inspiration from Introduction to Computer Systems (15-213) Cache lab which is a trace-driven cache simulator for a uniprocessor. Our idea is to build an event-driven cache simulator that supports multi-core processor. Caches play a vital role in determining the performance of parallel programs on a multi-core processor. One of the major challenges that multi-core processors face is the coherency problem. Cache is coherent when all the loads and stores to a given memory location behave correctly. There are two main methods to ensure cache coherence: a) snooping based cache coherence schemes b) directory based cache coherence schemes. 
+This project is an inspiration from Introduction to Computer Systems (15-213) Cache lab which is a trace-driven cache simulator for a uniprocessor. Our idea is to build an event-driven cache simulator that supports multi-core processors. Caches play a vital role in determining the performance of parallel programs on a multi-core processor. One of the major challenges that multi-core processors face is the coherence problem. Cache is coherent when all the loads and stores to a given memory location behave correctly. There are two main methods to ensure cache coherence: a) snooping based cache coherence schemes b) directory based cache coherence schemes. 
 
-Snooping based cache coherence scheme work based on the idea that coherence-related activity is broadcast to all processors in the system. Cache controllers snoop on the bus to monitor memory operations, and react accordingly, to maintain cache coherence. There are a few snooping based cache coherence schemes like MI(VI), MSI, MESI and MOESI. 
+Snooping based cache coherence schemes work based on the idea that coherence-related activity is broadcast to all processors in the system. Cache controllers snoop on the bus to monitor memory operations, and react accordingly, to maintain cache coherence. There are a few snooping based cache coherence schemes like MI(VI), MSI, MESI and MOESI. 
 
 ### MI:
 
 ![image](https://user-images.githubusercontent.com/80713159/159839944-505bf792-c69b-4556-ac90-35a748906504.png)
 
-### MSI
+### MSI:
 
 ![tempsnip](https://user-images.githubusercontent.com/80713159/159840351-fe896d5c-6f04-4c65-b93e-15dc999fee7e.png)
 
-### MESI
+### MESI:
 
 ![tempsnip1](https://user-images.githubusercontent.com/80713159/159840596-00ec5f54-2cdf-4fae-b2b4-d2395418cc56.png)
 
 
 ## CHALLENGE:
 
-1) Understand Pin tool to generate memory events in order and to indicate when the deired funcitons are called
+1) Understand Pin tool to generate memory events in order and to indicate when the desired functions are called
 2) Designing an event-driven cache simulator
-3) Veifying the correctness of implemented snooping based cache coherency schemes
+3) Verifying the correctness of implemented snooping based cache coherence schemes
 
 ## RESOURCES:
 
@@ -40,13 +40,13 @@ Snooping based cache coherence scheme work based on the idea that coherence-rela
 | ----------- | ----------- |
 | 75% | Implementing event-driven uni-processor cache simulator |
 | 100% | Implementing MI (VI) and MSI snooping based cache coherence protocols | 
-| 125% | Implementing MESI and visulization of stats and custom recommendations on how to improve memory performance | 
+| 125% | Implementing MESI and visualization of stats | 
 
 ## PLATFORM CHOICE:
 
 1) Programming Language:
 
-We will be implementing the simulator in C++. Since, we are implementing multiple cache coherency protocols, we can use various aspects of Object Oriented Programming to our advantage.
+We will be implementing the simulator in C++. Since we are implementing multiple cache coherency protocols, we can use various aspects of Object Oriented Programming to our advantage.
 
 2) Architecture:
 
@@ -71,11 +71,11 @@ To generate the memory events, we will be using Intel's Pin tool. This tool gene
 
 **1) In one to two paragraphs, summarize the work that you have completed so far. (This should be easy if you have been maintaining this information on your project page.)**
 
-For any cache simulator we require the memory access patterns for our desired program. We initially planned to build a trace-driven cache simulator with traces generated by Pin tool. However after speaking with Prof. Beckmann we realised that going forward an event-driven simulator would resolve the future memory access ordering problems for a multi-core processor. To do so, we needed to understand how Pin tool works along with it's APIs. After figuring this out, we were able to get the memory access patterns at run time for a given program binary. Hence, we were successfully able to generate events at every memory access for a given program.
+For any cache simulator we require the memory access patterns for our desired program. We initially planned to build a trace-driven cache simulator with traces generated by the Pin tool. However after speaking with Prof. Beckmann, we realized that going forward an event-driven simulator would resolve the future memory access ordering problems for a multi-core processor. To do so, we needed to understand how Pin tool works along with its APIs. After figuring this out, we were able to get the memory access patterns at run time for a given program binary. Hence, we were successfully able to generate events at every memory access for a given program.
 
 We designed a uniprocessor cache simulator using C++ STL library and implemented it. To implement a LRU policy, cache lines are implemented using lists, the recently used cache line is pushed back and the least recently used cache line is at the front of the list. The LRU line is erased whenever there is a need for an eviction. This was thoroughly tested by using the trace files used in Cache Lab(15213 - Introduction to Computer Systems). 
 
-The next challenge was to build a event-driven cache simulator by integrating Pin tool with our uni-processor cache simulator. Whenever, Pin tracks a memory access event, it triggers our cache simulator which simulates the cache at run time. We also create a trace of these memory accesses which we use to verify the correctness of our event-driven cache simulator. We check the cache stats obtained by running a simple program and then feed the trace obtained to the csim-ref that was used in Cache Lab (15213 - Introduction to Computer Systems). Our results match with the Csim-ref and hence, our event-driven uniprocessor cache simulator is working correctly.
+The next challenge was to build an event-driven cache simulator by integrating Pin tool with our uni-processor cache simulator. Whenever Pin tracks a memory access event, it triggers our cache simulator which simulates the cache at run time. We also create a trace of these memory accesses which we use to verify the correctness of our event-driven cache simulator. We check the cache stats obtained by running a simple program and then feed the trace obtained to the csim-ref that was used in Cache Lab (15213 - Introduction to Computer Systems). Our results match with the Csim-ref and hence, our event-driven uniprocessor cache simulator is working correctly.
 
 **2) Describe how you are doing with respect to the goals and deliverables stated in your proposal. Do you still believe you will be able to produce all your deliverables? In your milestone writeup we want an updated list of goals that you plan to hit for the poster session.**
 
@@ -98,21 +98,22 @@ We're attaching a screenshot of the stats obtained from our event-driven simulat
 
 **5) List the issues that concern you the most. Are there any remaining unknowns (things you simply don’t know how to solve, or resource you don’t know how to get) or is it just a matter of coding and doing the work?**
 
-Once we implement the different snooping-based cache coherence protocols, there is a challenge to verify the correctness of these protocols. Since, it's event driven we still need to think of the best possible way to verify the correctness. 
+Once we implement the different snooping-based cache coherence protocols, there is a challenge to verify the correctness of these protocols. Since it's event driven we still need to think of the best possible way to verify the correctness. 
 
 ## MILESTONE 2
 
 **Update since Milestone 1:**
-1) Implemented MI, MSI, MESI snooping based cache coherence protocols. 
+1) Implemented MI, MSI(100% deliverable), MESI (125% deliverable) snooping based cache coherence protocols. 
 2) Integrated the above protocols to our event-driven cache simulator.
-3) Integrated graphical visualisation to compare per thread misses/hits/evictions
+3) Integrated graphical visualization to compare per thread misses/hits/evictions (125% deliverable)
 
-**Pending tasks:**
+**Pending tasks:(More than 125% deliverable)**
 1) Compare different snooping protocols on the same parallel program
 2) Provide cache statistics for specific functions
 
-**Ideas to further the project**
+**Ideas to further the project (More than 125% deliverable)**
 1) Provide cache coherent traffic statistics 
+2) Run the simulator on various Assignments and lecture material in the course and validate the analysis
 
 
 ## AUTHORS:
