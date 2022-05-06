@@ -1,5 +1,13 @@
 # Multi-Core Cache Simulator
 
+## FINAL SUBMISSION:
+
+**[Video](https://drive.google.com/file/d/1eTwjvIbS7VaXJ5YNv02Frj4-h5f3iZtV/view)**
+
+**[Report](https://github.com/nishantpoorswani/15618-final-project/blob/main/Report.pdf)**
+
+**[Slides](https://docs.google.com/presentation/d/1nHaF-W8W5mh3F_X_kMZsY3p4XM7Un4B4/edit)**
+
 ## SUMMARY:
 
 We have implemented an execution-driven multi-core cache simulator with fast forward capabilities. This simulator supports different snooping based cache coherence schemes. It analyzes memory accesses at run time and reports various cache performance metrics. It has added features to visualize function specific cache statistics, comparison of snooping based protocols for a given program and coherence traffic.
